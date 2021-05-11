@@ -23,6 +23,7 @@ class InnerWrapper extends React.PureComponent {
     const wrapperStyles = {
       transform: `translate3d(${translate}px, 0, 0)`,
       transition: `transform ${dragging || !mounted ? '0' : transition}s  ease-out`,
+      pointerEvents: dragging ? 'none' : 'all',
     };
     return (
       <Block className={cx('innerWrapperClass')} style={wrapperStyles} ref={(inst) => this.setMenuInnerRef(inst)}>

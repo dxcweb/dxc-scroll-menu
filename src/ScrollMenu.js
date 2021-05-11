@@ -44,10 +44,10 @@ class ScrollMenu extends React.PureComponent {
     const { translate: startDragTranslate } = this.state;
     this.startPoint = this.getPoint(e);
     this.startDragTranslate = startDragTranslate;
-    this.setState({ dragging: true });
   };
   handleDrag = (e) => {
     if (!this.startPoint) return;
+    this.setState({ dragging: true });
     this.calculateTranslate(e);
   };
   handleDragStop = (e) => {
