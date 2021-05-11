@@ -52,11 +52,10 @@ class ScrollMenu extends React.PureComponent {
     if (Math.abs(diff) > 6) {
       this.setState({ dragging: true });
     }
-    this.calculateTranslate(e);
+    this.setState({ translate: this.startDragTranslate + diff });
   };
   handleDragStop = (e) => {
     if (!this.startPoint) return;
-    this.calculateTranslate(e);
     this.startPoint = false;
     const { initTranslate } = this.state;
     let translate = this.state.translate;
@@ -102,11 +101,7 @@ class ScrollMenu extends React.PureComponent {
     this.setState({ translate: newTranslate });
     this.calculateArrow(newTranslate);
   };
-  calculateTranslate = (e) => {
-    const point = this.getPoint(e);
-    const diff = point - this.startPoint;
-    this.setState({ translate: this.startDragTranslate + diff });
-  };
+
   setItemRef = (itemsRef, modifySource) => {
     this.itemsRef = itemsRef;
     if (modifySource === 'selected') {
@@ -135,7 +130,7 @@ class ScrollMenu extends React.PureComponent {
     }
     this.menuWidth = menuWidth;
     this.itemsWidth = itemsWidth;
-    console.log({ menuWidth, itemsWidth });
+    // console.log({ menuWidth, itemsWidth });
   };
   resize = () => {
     const selected = this.findSelectedRef();
