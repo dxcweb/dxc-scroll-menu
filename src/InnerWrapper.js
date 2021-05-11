@@ -18,7 +18,7 @@ class InnerWrapper extends React.PureComponent {
     const { width: menuInnerWidth } = getClientRect(menuInner);
   };
   render() {
-    const { translate, data, renderItem, setItemRef, dragging, mounted } = this.props;
+    const { translate, data, renderItem, setItemRef, dragging, mounted, selected } = this.props;
     let transition = 0.1;
     const wrapperStyles = {
       transform: `translate3d(${translate}px, 0, 0)`,
@@ -26,7 +26,7 @@ class InnerWrapper extends React.PureComponent {
     };
     return (
       <Block className={cx("innerWrapperClass")} style={wrapperStyles} ref={(inst) => this.setMenuInnerRef(inst)}>
-        <Items renderItem={renderItem} data={data} setItemRef={setItemRef} />
+        <Items selected={selected} renderItem={renderItem} data={data} setItemRef={setItemRef} />
       </Block>
     );
   }

@@ -23,13 +23,7 @@ class ScrollMenu extends React.PureComponent {
     document.removeEventListener("mousemove", this.handleDrag);
     document.removeEventListener("mouseup", this.handleDragStop);
   }
-  componentDidUpdate(prevProps, prevState) {
-    const { selected } = this.props;
-    const { selected: prevSelected } = prevProps;
-    if (selected !== prevSelected) {
-      this.resize();
-    }
-  }
+
   getPoint = (ev) => {
     if ("touches" in ev) {
       return ev.touches[0].clientX;
@@ -159,7 +153,7 @@ class ScrollMenu extends React.PureComponent {
     return false;
   };
   render() {
-    const { data, renderItem, arrowRight, arrowLeft } = this.props;
+    const { data, renderItem, arrowRight, arrowLeft, selected } = this.props;
     const { translate, dragging, mounted, disabledLeft, disabledRight } = this.state;
     return (
       <React.Fragment>
@@ -174,6 +168,7 @@ class ScrollMenu extends React.PureComponent {
             onTouchMove={this.handleDrag}
           >
             <InnerWrapper
+              selected={selected}
               mounted={mounted}
               dragging={dragging}
               translate={translate}

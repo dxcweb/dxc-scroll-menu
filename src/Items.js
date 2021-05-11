@@ -7,9 +7,11 @@ class Items extends React.PureComponent {
   itemsRef = {};
 
   componentWillReceiveProps(nextProps) {
-    const { data } = this.props;
-    const { data: nextData } = nextProps;
+    const { data, selected } = this.props;
+    const { data: nextData, selected: nextSelected } = nextProps;
     if (data !== nextData) {
+      this.init();
+    } else if (nextSelected != selected) {
       this.init();
     }
   }
