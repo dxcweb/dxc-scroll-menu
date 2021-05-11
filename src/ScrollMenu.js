@@ -24,6 +24,13 @@ class ScrollMenu extends React.PureComponent {
     document.removeEventListener("mouseup", this.handleDragStop);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { data, selected } = this.props;
+    const { data: nextData, selected: nextSelected } = nextProps;
+    if (data !== nextData) {
+      this.setState({ mounted: false });
+    }
+  }
   getPoint = (ev) => {
     if ("touches" in ev) {
       return ev.touches[0].clientX;
@@ -98,7 +105,7 @@ class ScrollMenu extends React.PureComponent {
   };
   setItemRef = (itemsRef) => {
     this.itemsRef = itemsRef;
-    this.setState({ mounted: false }, this.resize);
+    this.resize();
   };
   setMenuWrapperRef = (menuWrapper) => {
     this.menuWrapper = menuWrapper;
