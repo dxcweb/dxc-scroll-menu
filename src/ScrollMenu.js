@@ -1,8 +1,8 @@
-import React from "react";
-import { getClientRect, getObjectFirstAttribute } from "./utils";
-import InnerWrapper from "./InnerWrapper";
-import ArrowRight from "./ArrowRight";
-import ArrowLeft from "./ArrowLeft";
+import React from 'react';
+import { getClientRect, getObjectFirstAttribute } from './utils';
+import InnerWrapper from './InnerWrapper';
+import ArrowRight from './ArrowRight';
+import ArrowLeft from './ArrowLeft';
 class ScrollMenu extends React.PureComponent {
   state = {
     mounted: false,
@@ -16,12 +16,12 @@ class ScrollMenu extends React.PureComponent {
   menuWidth = 0;
   itemsWidth = 0;
   componentDidMount() {
-    document.addEventListener("mousemove", this.handleDrag);
-    document.addEventListener("mouseup", this.handleDragStop);
+    document.addEventListener('mousemove', this.handleDrag);
+    document.addEventListener('mouseup', this.handleDragStop);
   }
   componentWillUnmount() {
-    document.removeEventListener("mousemove", this.handleDrag);
-    document.removeEventListener("mouseup", this.handleDragStop);
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('mouseup', this.handleDragStop);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,9 +32,9 @@ class ScrollMenu extends React.PureComponent {
     }
   }
   getPoint = (ev) => {
-    if ("touches" in ev) {
+    if ('touches' in ev) {
       return ev.touches[0].clientX;
-    } else if ("clientX" in ev) {
+    } else if ('clientX' in ev) {
       return ev.clientX;
     } else {
       return 0;
@@ -103,15 +103,20 @@ class ScrollMenu extends React.PureComponent {
     const diff = point - this.startPoint;
     this.setState({ translate: this.startDragTranslate + diff });
   };
-  setItemRef = (itemsRef) => {
+  setItemRef = (itemsRef, modifySource) => {
     this.itemsRef = itemsRef;
-    this.resize();
+    if (modifySource === 'selected') {
+      this.resize();
+    } else {
+      this.setState({ mounted: false }, this.resize);
+    }
   };
   setMenuWrapperRef = (menuWrapper) => {
     this.menuWrapper = menuWrapper;
   };
 
   resize = () => {
+    console.log(2);
     const { width: menuWidth } = getClientRect(this.menuWrapper);
     let itemsWidth = 0;
     let offset = 0;
@@ -125,6 +130,9 @@ class ScrollMenu extends React.PureComponent {
     }
     this.menuWidth = menuWidth;
     this.itemsWidth = itemsWidth;
+
+    window.menuWrapper = this.menuWrapper;
+    console.log({ menuWidth, itemsWidth });
 
     const selected = this.findSelectedRef();
 
@@ -151,7 +159,7 @@ class ScrollMenu extends React.PureComponent {
   };
   findSelectedRef = () => {
     const { selected } = this.props;
-    if (!selected || selected === "") return false;
+    if (!selected || selected === '') return false;
     for (let key in this.itemsRef) {
       if (key == selected) {
         return this.itemsRef[key];
@@ -167,7 +175,7 @@ class ScrollMenu extends React.PureComponent {
         <ArrowLeft arrowLeft={arrowLeft} disabledLeft={disabledLeft} onClick={this.handleArrowClick.bind(this, true)} />
         <div ref={this.setMenuWrapperRef} onWheel={this.handleWheel}>
           <div
-            style={{ overflow: "hidden" }}
+            style={{ overflow: 'hidden' }}
             onMouseDown={this.handleDragStart}
             onTouchStart={this.handleDragStart}
             onTouchEnd={this.handleDragStop}

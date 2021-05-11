@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 class Items extends React.PureComponent {
   state = {
@@ -10,9 +10,9 @@ class Items extends React.PureComponent {
     const { data, selected } = this.props;
     const { data: nextData, selected: nextSelected } = nextProps;
     if (data !== nextData) {
-      this.init();
+      this.init('data');
     } else if (nextSelected != selected) {
-      this.init();
+      this.init('selected');
     }
   }
   setRef = (key, index, ref) => {
@@ -20,11 +20,13 @@ class Items extends React.PureComponent {
     const { setItemRef, data } = this.props;
     this.itemsRef[key] = { index, key, ref };
     if (Object.keys(this.itemsRef).length === data.length) {
-      setItemRef(this.itemsRef);
+      setItemRef(this.itemsRef, this.modifySource);
     }
   };
-  init = () => {
+  modifySource = 'modifyData';
+  init = (modifySource) => {
     this.itemsRef = {};
+    this.modifySource = modifySource;
   };
 
   render() {
@@ -33,10 +35,10 @@ class Items extends React.PureComponent {
     return data.map((item, i) => {
       return (
         <div
-          style={{ userSelect: "none" }}
+          style={{ userSelect: 'none' }}
           ref={(inst) => this.setRef(item.id || i, i, inst)}
           // className={`${itemClass} ${Item.props.selected ? itemClassActive : ""}`}
-          key={"menuItem-" + item.id}
+          key={'menuItem-' + item.id}
           // style={itemStyle}
           // tabIndex={disableTabindex ? undefined : 0}
           // role={useButtonRole ? "button" : undefined}
