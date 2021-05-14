@@ -1,17 +1,17 @@
-import Block from "dxc-flex";
-import React from "react";
-import ReactDOM from "react-dom";
-import ScrollMenu from "../../src";
-import "./index.css";
+import Block from 'dxc-flex';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ScrollMenu from '../../src';
+import './index.css';
 export default class Simple extends React.PureComponent {
   state = {
-    number: 1,
+    number: 20,
     items: [],
     width: 300,
     selected: 5,
   };
   componentDidMount() {
-    this.onChangeNumber({ target: { value: 5 } });
+    this.onChangeNumber({ target: { value: 20 } });
   }
   onClick = (id) => {
     this.setState({ selected: id });
@@ -31,7 +31,7 @@ export default class Simple extends React.PureComponent {
         onClick={onClick}
         horizontal='center'
         vertical='center'
-        style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: 20 }}
+        style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 20 }}
       >
         &gt;
       </Block>
@@ -44,7 +44,7 @@ export default class Simple extends React.PureComponent {
         onClick={onClick}
         horizontal='center'
         vertical='center'
-        style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 20 }}
+        style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 20 }}
       >
         &lt;
       </Block>
@@ -73,7 +73,7 @@ export default class Simple extends React.PureComponent {
     return (
       <div>
         <div
-          style={{ width: parseInt(width), padding: 20, background: "#000", color: "red", boxSizing: "border-box", position: "relative" }}
+          style={{ width: parseInt(width), padding: 20, background: '#000', color: 'red', boxSizing: 'border-box', position: 'relative' }}
         >
           <ScrollMenu
             selected={selected}
@@ -94,7 +94,7 @@ export default class Simple extends React.PureComponent {
         </Block>
         <Block style={{ marginTop: 20 }}>
           <div>选择id: </div>
-          <input value={selected} onChange={this.onChange.bind(this, "selected")} />
+          <input value={selected} onChange={this.onChange.bind(this, 'selected')} />
         </Block>
         {/* <Block onClick={this.onClickOk} horizontal='center' vertical='center' className='okBtn'>
           确认
@@ -104,4 +104,4 @@ export default class Simple extends React.PureComponent {
   }
 }
 
-ReactDOM.render(<Simple />, document.querySelector("#demo"));
+ReactDOM.render(<Simple />, document.querySelector('#demo'));

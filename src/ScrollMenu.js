@@ -22,6 +22,7 @@ class ScrollMenu extends React.PureComponent {
   componentWillUnmount() {
     document.removeEventListener('mousemove', this.handleDrag);
     document.removeEventListener('mouseup', this.handleDragStop);
+    clearTimeout(this.inertiaTimeout);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,6 +45,8 @@ class ScrollMenu extends React.PureComponent {
     const { translate: startDragTranslate } = this.state;
     this.startPoint = this.getPoint(e);
     this.startDragTranslate = startDragTranslate;
+    this.startDragTime = Date.now();
+    this.isInertia = false;
   };
   handleDrag = (e) => {
     if (!this.startPoint) return;
@@ -56,17 +59,45 @@ class ScrollMenu extends React.PureComponent {
   };
   handleDragStop = (e) => {
     if (!this.startPoint) return;
+    const { dragging } = this.state;
     this.startPoint = false;
-    const { initTranslate } = this.state;
+    if (!dragging) return;
     let translate = this.state.translate;
-    if (this.itemsWidth < this.menuWidth) {
-      translate = initTranslate;
-    } else {
-      if (this.state.translate > this.maxTranslate) {
-        translate = this.maxTranslate;
-      } else if (this.minTranslate > translate) {
-        translate = this.minTranslate;
+
+    const speed = (this.startDragTranslate - translate) / (Date.now() - this.startDragTime);
+    this.isInertia = true;
+    this.inertia(Math.abs(speed) * 1.2, speed > 0 ? 'right' : 'left');
+  };
+  inertia = (speed, direction) => {
+    if (speed <= 0 || !this.isInertia) {
+      this.inertiaStop();
+      this.setState({ dragging: false });
+
+      return;
+    }
+    const interval = 5;
+    let { translate } = this.state;
+    translate = direction === 'right' ? translate - speed * interval : translate + speed * interval;
+    this.setState({ translate });
+    this.inertiaTimeout = setTimeout(() => {
+      let resistance = 0.01;
+      if (translate > this.maxTranslate || this.minTranslate > translate) {
+        resistance = 0.3;
       }
+      this.inertia(speed - resistance, direction);
+    }, interval);
+  };
+  inertiaStop = () => {
+    this.isInertia = false;
+    let translate = this.state.translate;
+    if (this.state.translate > this.maxTranslate) {
+      translate = this.maxTranslate;
+      this.setState({ translate, dragging: false });
+      this.calculateArrow(translate);
+    } else if (this.minTranslate > translate) {
+      translate = this.minTranslate;
+      this.setState({ translate, dragging: false });
+      this.calculateArrow(translate);
     }
     this.setState({ translate, dragging: false });
     this.calculateArrow(translate);
