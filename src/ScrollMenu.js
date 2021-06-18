@@ -18,12 +18,22 @@ class ScrollMenu extends React.PureComponent {
   componentDidMount() {
     document.addEventListener('mousemove', this.handleDrag);
     document.addEventListener('mouseup', this.handleDragStop);
+    window.addEventListener('resize', this.onResize);
   }
   componentWillUnmount() {
     document.removeEventListener('mousemove', this.handleDrag);
-    document.removeEventListener('mouseup', this.handleDragStop);
+    document.removeEventListener('mousemove', this.handleDrag);
+    window.removeEventListener('resize', this.onResize);
     clearTimeout(this.inertiaTimeout);
+    clearTimeout(this.resizeTimeOut);
   }
+  onResize = () => {
+    clearTimeout(this.resizeTimeOut);
+    this.resizeTimeOut = setTimeout(() => {
+      this.setRef();
+      this.resize();
+    }, 200);
+  };
 
   componentWillReceiveProps(nextProps) {
     const { data, selected } = this.props;

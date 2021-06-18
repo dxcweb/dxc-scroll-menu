@@ -1,6 +1,6 @@
 {
   "name": "dxc-scroll-menu",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "lib/index.js",
   "files": [
     "assets",
@@ -47,5 +47,8 @@
   "repository": "",
   "keywords": [
     "react-component"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
