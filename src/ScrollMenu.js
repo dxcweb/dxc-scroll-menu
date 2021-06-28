@@ -3,6 +3,8 @@ import { getClientRect, getObjectFirstAttribute } from './utils';
 import InnerWrapper from './InnerWrapper';
 import ArrowRight from './ArrowRight';
 import ArrowLeft from './ArrowLeft';
+import { orderBy } from 'lodash';
+
 class ScrollMenu extends React.PureComponent {
   state = {
     mounted: false,
@@ -162,7 +164,9 @@ class ScrollMenu extends React.PureComponent {
     const { width: menuWidth } = getClientRect(this.menuWrapper);
     let itemsWidth = 0;
     let offset = 0;
-    for (let key in this.itemsRef) {
+    const refArr = orderBy(this.itemsRef, ['index']);
+    for (let i = 0; i < refArr.length; i++) {
+      const key = refArr[i].key;
       const item = this.itemsRef[key];
       item.width = item.ref.scrollWidth;
       item.offset = offset + parseInt((menuWidth - item.width) / 2);

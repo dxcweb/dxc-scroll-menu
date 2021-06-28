@@ -1,5 +1,4 @@
 import React from 'react';
-
 class Items extends React.PureComponent {
   state = {
     items: [],
@@ -18,7 +17,7 @@ class Items extends React.PureComponent {
   setRef = (key, index, ref) => {
     if (!ref) return;
     const { setItemRef, data } = this.props;
-    this.itemsRef[key] = { index, key, ref };
+    this.itemsRef[`${key}`] = { index, key, ref };
     if (Object.keys(this.itemsRef).length === data.length) {
       setItemRef(this.itemsRef, this.modifySource);
     }
