@@ -29,7 +29,7 @@ class Items extends React.PureComponent {
   };
 
   render() {
-    const { data, renderItem } = this.props;
+    const { data, renderItem, itemData } = this.props;
     if (!data || !renderItem) return null;
     return data.map((item, i) => {
       return (
@@ -42,7 +42,7 @@ class Items extends React.PureComponent {
           // tabIndex={disableTabindex ? undefined : 0}
           // role={useButtonRole ? "button" : undefined}
         >
-          {renderItem(item, i)}
+          {renderItem(item, i, itemData)}
         </div>
       );
     });

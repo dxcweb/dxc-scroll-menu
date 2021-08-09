@@ -220,8 +220,9 @@ class ScrollMenu extends React.PureComponent {
     return false;
   };
   render() {
-    const { data, renderItem, arrowRight, arrowLeft, selected } = this.props;
+    const { data, renderItem, arrowRight, arrowLeft, selected, itemData } = this.props;
     const { translate, dragging, mounted, disabledLeft, disabledRight } = this.state;
+    console.log(222);
     return (
       <React.Fragment>
         <ArrowLeft arrowLeft={arrowLeft} disabledLeft={disabledLeft} onClick={this.handleArrowClick.bind(this, true)} />
@@ -235,6 +236,7 @@ class ScrollMenu extends React.PureComponent {
             onTouchMove={this.handleDrag}
           >
             <InnerWrapper
+              itemData={itemData}
               selected={selected}
               mounted={mounted}
               dragging={dragging}
