@@ -34,7 +34,7 @@ class ScrollMenu extends React.PureComponent {
     this.resizeTimeOut = setTimeout(() => {
       this.setRef();
       this.resize();
-    }, 200);
+    }, 300);
   };
 
   componentWillReceiveProps(nextProps) {
@@ -162,6 +162,7 @@ class ScrollMenu extends React.PureComponent {
   };
   setRef = () => {
     const { width: menuWidth } = getClientRect(this.menuWrapper);
+    if (menuWidth === 0) return;
     let itemsWidth = 0;
     let offset = 0;
     const refArr = orderBy(this.itemsRef, ['index']);
@@ -173,6 +174,7 @@ class ScrollMenu extends React.PureComponent {
       itemsWidth += item.width;
       offset -= item.width;
     }
+    window.menuWrapper = this.menuWrapper;
     this.menuWidth = menuWidth;
     this.itemsWidth = itemsWidth;
     // console.log({ menuWidth, itemsWidth });
@@ -182,7 +184,13 @@ class ScrollMenu extends React.PureComponent {
 
     let translate = 0;
     if (this.itemsWidth < this.menuWidth) {
-      translate = parseInt((this.menuWidth - this.itemsWidth) / 2);
+      const { horizontal } = this.props;
+      if (horizontal === 'left') {
+        translate = 0;
+      } else {
+        translate = parseInt((this.menuWidth - this.itemsWidth) / 2);
+      }
+
       this.minTranslate = translate;
       this.maxTranslate = translate;
     } else if (!selected) {

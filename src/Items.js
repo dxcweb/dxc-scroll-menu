@@ -37,7 +37,7 @@ class Items extends React.PureComponent {
           style={{ userSelect: 'none' }}
           ref={(inst) => this.setRef(item.id || i, i, inst)}
           // className={`${itemClass} ${Item.props.selected ? itemClassActive : ""}`}
-          key={'menuItem-' + item.id}
+          key={'menuItem-' + (item.id || i)}
           // style={itemStyle}
           // tabIndex={disableTabindex ? undefined : 0}
           // role={useButtonRole ? "button" : undefined}

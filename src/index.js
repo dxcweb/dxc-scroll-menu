@@ -1,1 +1,1 @@
-export { default } from "./ScrollMenu";
+export { default } from './ScrollMenu';
