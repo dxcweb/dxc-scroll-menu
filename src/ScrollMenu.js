@@ -174,8 +174,6 @@ class ScrollMenu extends React.PureComponent {
       itemsWidth += item.width;
       offset -= item.width;
     }
-    // window.menuWrapper = this.menuWrapper;
-    window.ref = this.itemsRef;
     this.menuWidth = menuWidth;
     this.itemsWidth = itemsWidth;
     console.log({ menuWidth, itemsWidth });
