@@ -176,7 +176,6 @@ class ScrollMenu extends React.PureComponent {
     }
     this.menuWidth = menuWidth;
     this.itemsWidth = itemsWidth;
-    console.log({ menuWidth, itemsWidth });
   };
   resize = () => {
     const selected = this.findSelectedRef();
