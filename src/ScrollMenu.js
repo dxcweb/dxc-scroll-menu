@@ -38,10 +38,13 @@ class ScrollMenu extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { data, selected } = this.props;
+    const { data, selected, selectedChangeResize } = this.props;
     const { data: nextData, selected: nextSelected } = nextProps;
     if (data !== nextData) {
       this.setState({ mounted: false });
+    }
+    if (selectedChangeResize && selected !== nextSelected) {
+      this.onResize();
     }
   }
   getPoint = (ev) => {
