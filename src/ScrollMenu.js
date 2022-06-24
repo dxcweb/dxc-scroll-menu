@@ -148,6 +148,9 @@ class ScrollMenu extends React.PureComponent {
     this.calculateArrow(newTranslate);
   };
 
+  setItemsWpRef = (itemsWpRef) => {
+    this.itemsWpRef = itemsWpRef;
+  };
   setItemRef = (itemsRef, modifySource) => {
     this.itemsRef = itemsRef;
     if (modifySource === "selected") {
@@ -178,7 +181,7 @@ class ScrollMenu extends React.PureComponent {
       offset -= item.width;
     }
     this.menuWidth = menuWidth;
-    this.itemsWidth = itemsWidth;
+    this.itemsWidth = this.itemsWpRef.scrollWidth;
   };
   resize = () => {
     const selected = this.findSelectedRef();
@@ -242,6 +245,7 @@ class ScrollMenu extends React.PureComponent {
               dragging={dragging}
               translate={translate}
               setItemRef={this.setItemRef}
+              setItemsWpRef={this.setItemsWpRef}
               data={data}
               renderItem={renderItem}
             />

@@ -1,8 +1,7 @@
 import React from "react";
 import styles from "../assets/InnerWrapper.css";
 import classNames from "classnames/bind";
-import Block from "dxc-flex";
-import { getClientRect } from "./utils";
+// import Block from "dxc-flex";
 import Items from "./Items";
 const cx = classNames.bind(styles);
 class InnerWrapper extends React.PureComponent {
@@ -14,11 +13,8 @@ class InnerWrapper extends React.PureComponent {
     this.setState({ items: children });
   }
 
-  setMenuInnerRef = (menuInner) => {
-    const { width: menuInnerWidth } = getClientRect(menuInner);
-  };
   render() {
-    const { translate, data, renderItem, setItemRef, dragging, mounted, selected, itemData } = this.props;
+    const { translate, data, renderItem, setItemRef, dragging, mounted, selected, itemData, setItemsWpRef } = this.props;
     let transition = 0.1;
     const wrapperStyles = {
       transform: `translate3d(${translate}px, 0, 0)`,
@@ -26,9 +22,11 @@ class InnerWrapper extends React.PureComponent {
       pointerEvents: dragging ? "none" : "all",
     };
     return (
-      <Block className={cx("innerWrapperClass")} style={wrapperStyles} ref={(inst) => this.setMenuInnerRef(inst)}>
-        <Items itemData={itemData} selected={selected} renderItem={renderItem} data={data} setItemRef={setItemRef} />
-      </Block>
+      <div className={cx("innerWrapperClass")} style={wrapperStyles}>
+        <div className={cx("itemsWp")} ref={setItemsWpRef}>
+          <Items itemData={itemData} selected={selected} renderItem={renderItem} data={data} setItemRef={setItemRef} />
+        </div>
+      </div>
     );
   }
 }
