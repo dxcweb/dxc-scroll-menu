@@ -21,11 +21,13 @@ class ScrollMenu extends React.PureComponent {
     document.addEventListener("mousemove", this.handleDrag);
     document.addEventListener("mouseup", this.handleDragStop);
     window.addEventListener("resize", this.onResize);
+    this.scrollWp.addEventListener("wheel", this.handleWheel);
   }
   componentWillUnmount() {
     document.removeEventListener("mousemove", this.handleDrag);
     document.removeEventListener("mouseup", this.handleDragStop);
     window.removeEventListener("resize", this.onResize);
+    this.scrollWp.removeEventListener("wheel", this.handleWheel);
     clearTimeout(this.inertiaTimeout);
     clearTimeout(this.resizeTimeOut);
   }
@@ -123,10 +125,19 @@ class ScrollMenu extends React.PureComponent {
     this.setState({ disabledRight, disabledLeft });
   };
   handleWheel = (e) => {
+    const { translate } = this.state;
     if (e.deltaY < 0) {
-      this.handleArrowClick();
+      if (translate < this.maxTranslate) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleArrowClick();
+      }
     } else {
-      this.handleArrowClick(false);
+      if (translate > this.minTranslate) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleArrowClick(false);
+      }
     }
   };
   handleArrowClick = (left = true) => {
@@ -137,8 +148,13 @@ class ScrollMenu extends React.PureComponent {
       return;
     }
 
-    const itemWidth = firstItem.width;
-    const diff = itemWidth > this.menuWidth ? itemWidth : this.menuWidth - itemWidth;
+    const { distance } = this.props;
+    let diff = distance;
+    if (!diff) {
+      const itemWidth = firstItem.width;
+      diff = itemWidth > this.menuWidth ? itemWidth : this.menuWidth - itemWidth;
+    }
+
     const { translate } = this.state;
 
     let newTranslate = left ? translate + diff : translate - diff;
@@ -229,7 +245,7 @@ class ScrollMenu extends React.PureComponent {
     return (
       <React.Fragment>
         <ArrowLeft arrowLeft={arrowLeft} disabledLeft={disabledLeft} onClick={this.handleArrowClick.bind(this, true)} />
-        <div ref={this.setMenuWrapperRef} onWheel={this.handleWheel}>
+        <div ref={this.setMenuWrapperRef}>
           <div
             style={{ overflow: "hidden" }}
             onMouseDown={this.handleDragStart}
@@ -237,6 +253,7 @@ class ScrollMenu extends React.PureComponent {
             onTouchEnd={this.handleDragStop}
             // onMouseMove={this.handleDrag}
             onTouchMove={this.handleDrag}
+            ref={(me) => (this.scrollWp = me)}
           >
             <InnerWrapper
               itemData={itemData}
