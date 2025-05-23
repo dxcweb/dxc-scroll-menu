@@ -4,6 +4,8 @@ import InnerWrapper from "./InnerWrapper";
 import ArrowRight from "./ArrowRight";
 import ArrowLeft from "./ArrowLeft";
 import { orderBy } from "lodash";
+const ua = navigator.userAgent;
+const isIE = ua.indexOf("MSIE") >= 0 || ua.indexOf("Trident") >= 0;
 
 class ScrollMenu extends React.PureComponent {
   state = {
@@ -13,6 +15,7 @@ class ScrollMenu extends React.PureComponent {
     dragging: false,
     disabledRight: true,
     disabledLeft: true,
+    transition: 0.1,
   };
   itemsRef = {};
   menuWidth = 0;
@@ -21,14 +24,41 @@ class ScrollMenu extends React.PureComponent {
     document.addEventListener("mousemove", this.handleDrag);
     document.addEventListener("mouseup", this.handleDragStop);
     window.addEventListener("resize", this.onResize);
+    this.scrollWp.addEventListener("wheel", this.handleWheel);
+    this.aotuPlay();
   }
   componentWillUnmount() {
     document.removeEventListener("mousemove", this.handleDrag);
     document.removeEventListener("mouseup", this.handleDragStop);
     window.removeEventListener("resize", this.onResize);
+    this.scrollWp.removeEventListener("wheel", this.handleWheel);
     clearTimeout(this.inertiaTimeout);
     clearTimeout(this.resizeTimeOut);
+    clearTimeout(this.aotuPlayTimeout);
+    clearTimeout(this.startAotuPlay);
   }
+  aotuPlay = () => {
+    const { aotuPlay, aotuPlayTime = 10 } = this.props;
+    if (!aotuPlay) return;
+    clearTimeout(this.aotuPlayTimeout);
+    const { translate } = this.state;
+    if (translate - 1 <= this.minTranslate) {
+      this.setState({ translate: this.maxTranslate, dragging: true });
+    } else {
+      this.setState({ translate: translate - 1, dragging: isIE ? true : false });
+    }
+    this.aotuPlayTimeout = setTimeout(() => {
+      this.aotuPlay();
+    }, aotuPlayTime);
+  };
+  setTranslate = (translate, other) => {
+    clearTimeout(this.aotuPlayTimeout);
+    clearTimeout(this.startAotuPlay);
+    this.setState({ translate, ...other });
+    this.startAotuPlay = setTimeout(() => {
+      this.aotuPlay();
+    }, 5000);
+  };
   onResize = () => {
     clearTimeout(this.resizeTimeOut);
     this.resizeTimeOut = setTimeout(() => {
@@ -56,6 +86,7 @@ class ScrollMenu extends React.PureComponent {
       return 0;
     }
   };
+
   handleDragStart = (e) => {
     const { translate: startDragTranslate } = this.state;
     this.startPoint = this.getPoint(e);
@@ -70,7 +101,7 @@ class ScrollMenu extends React.PureComponent {
     if (Math.abs(diff) > 6) {
       this.setState({ dragging: true });
     }
-    this.setState({ translate: this.startDragTranslate + diff });
+    this.setTranslate(this.startDragTranslate + diff);
   };
   handleDragStop = (e) => {
     if (!this.startPoint) return;
@@ -93,7 +124,7 @@ class ScrollMenu extends React.PureComponent {
     const interval = 5;
     let { translate } = this.state;
     translate = direction === "right" ? translate - speed * interval : translate + speed * interval;
-    this.setState({ translate });
+    this.setTranslate(translate);
     this.inertiaTimeout = setTimeout(() => {
       let resistance = 0.01;
       if (translate > this.maxTranslate || this.minTranslate > translate) {
@@ -107,14 +138,12 @@ class ScrollMenu extends React.PureComponent {
     let translate = this.state.translate;
     if (this.state.translate > this.maxTranslate) {
       translate = this.maxTranslate;
-      this.setState({ translate, dragging: false });
       this.calculateArrow(translate);
     } else if (this.minTranslate > translate) {
       translate = this.minTranslate;
-      this.setState({ translate, dragging: false });
       this.calculateArrow(translate);
     }
-    this.setState({ translate, dragging: false });
+    this.setTranslate(translate, { dragging: false });
     this.calculateArrow(translate);
   };
   calculateArrow = (translate) => {
@@ -123,10 +152,19 @@ class ScrollMenu extends React.PureComponent {
     this.setState({ disabledRight, disabledLeft });
   };
   handleWheel = (e) => {
+    const { translate } = this.state;
     if (e.deltaY < 0) {
-      this.handleArrowClick();
+      if (translate < this.maxTranslate) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleArrowClick();
+      }
     } else {
-      this.handleArrowClick(false);
+      if (translate > this.minTranslate) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleArrowClick(false);
+      }
     }
   };
   handleArrowClick = (left = true) => {
@@ -137,14 +175,21 @@ class ScrollMenu extends React.PureComponent {
       return;
     }
 
-    const itemWidth = firstItem.width;
-    const diff = itemWidth > this.menuWidth ? itemWidth : this.menuWidth - itemWidth;
+    const { distance } = this.props;
+    let diff = distance;
+    if (!diff) {
+      const itemWidth = firstItem.width;
+      diff = itemWidth > this.menuWidth ? itemWidth : this.menuWidth - itemWidth;
+    }
+
     const { translate } = this.state;
 
     let newTranslate = left ? translate + diff : translate - diff;
     newTranslate = Math.max(newTranslate, this.minTranslate);
     newTranslate = Math.min(newTranslate, this.maxTranslate);
-    this.setState({ translate: newTranslate });
+
+    this.setTranslate(newTranslate);
+
     this.calculateArrow(newTranslate);
   };
 
@@ -207,10 +252,11 @@ class ScrollMenu extends React.PureComponent {
       translate = Math.max(translate, this.minTranslate);
       translate = Math.min(translate, this.maxTranslate);
     }
-    this.setState({ initTranslate: translate, translate });
+    this.setTranslate(translate, { initTranslate: translate });
     this.calculateArrow(translate);
     setTimeout(() => {
       this.setState({ mounted: true });
+      this.aotuPlay();
     }, 10);
   };
   findSelectedRef = () => {
@@ -225,11 +271,11 @@ class ScrollMenu extends React.PureComponent {
   };
   render() {
     const { data, renderItem, arrowRight, arrowLeft, selected, itemData } = this.props;
-    const { translate, dragging, mounted, disabledLeft, disabledRight } = this.state;
+    const { translate, dragging, mounted, disabledLeft, disabledRight, transition } = this.state;
     return (
       <React.Fragment>
         <ArrowLeft arrowLeft={arrowLeft} disabledLeft={disabledLeft} onClick={this.handleArrowClick.bind(this, true)} />
-        <div ref={this.setMenuWrapperRef} onWheel={this.handleWheel}>
+        <div ref={this.setMenuWrapperRef}>
           <div
             style={{ overflow: "hidden" }}
             onMouseDown={this.handleDragStart}
@@ -237,8 +283,10 @@ class ScrollMenu extends React.PureComponent {
             onTouchEnd={this.handleDragStop}
             // onMouseMove={this.handleDrag}
             onTouchMove={this.handleDrag}
+            ref={(me) => (this.scrollWp = me)}
           >
             <InnerWrapper
+              transition={transition}
               itemData={itemData}
               selected={selected}
               mounted={mounted}

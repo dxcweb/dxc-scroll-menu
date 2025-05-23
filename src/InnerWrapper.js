@@ -15,10 +15,10 @@ class InnerWrapper extends React.PureComponent {
 
   render() {
     const { translate, data, renderItem, setItemRef, dragging, mounted, selected, itemData, setItemsWpRef } = this.props;
-    let transition = 0.1;
+    const transition = 0.1;
     const wrapperStyles = {
       transform: `translate3d(${translate}px, 0, 0)`,
-      transition: `transform ${dragging || !mounted ? "0" : transition}s  ease-out`,
+      transition: `transform ${dragging || !mounted ? "0" : transition}s  ${transition === 0.1 ? "ease-out" : "linear"}`,
       pointerEvents: "all",
     };
     return (
