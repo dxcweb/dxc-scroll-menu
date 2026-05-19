@@ -1,6 +1,6 @@
 {
   "name": "dxc-scroll-menu",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "main": "lib/index.js",
   "files": [
     "assets",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "pub": "npm run build && npm publish",
-    "build": "nwb build-react-component",
+    "build": "cross-env NODE_ENV=production nwb build-react-component",
     "clean": "nwb clean-module && nwb clean-demo",
     "prepublishOnly": "npm run build",
     "start": "nwb serve-react-demo",
@@ -23,7 +23,7 @@
     "dxc-flex": "^3.0.2"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "react": "17.x"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
@@ -38,8 +38,9 @@
     "nwb": "0.24.x",
     "nwb-less": "^0.8.0",
     "prettier": "^2.0.5",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^17.x",
+    "react-dom": "^17.x",
+    "cross-env": "^7.0.3"
   },
   "author": "",
   "homepage": "",
